@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.12)
+project(dbpool)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+include_directories("/usr/include/mysql")
+link_directories("/usr/lib64/mysql")
+add_executable(dbpool main.cpp db.cpp)
+target_link_libraries(dbpool mysqlclient pthread)
