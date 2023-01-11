@@ -30,6 +30,7 @@ public:
     bool Connect(const std::string& host, const std::string& name, const std::string& passwd, const std::string& database, int32_t port, size_t version);
     bool IsHealthy() const;
     MYSQL* GetCon();
+    size_t GetVersion();
 
 private:
     MYSQL* m_con;
@@ -66,6 +67,8 @@ public:
     void Connect(const std::string& host, const std::string& name, const std::string& passwd, const std::string& database, int32_t port);
 
     std::unique_ptr<DBCon> GetConnection();
+
+    void CheckConnection();
 
 private:
     explicit DB(size_t max);

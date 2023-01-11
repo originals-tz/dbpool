@@ -57,6 +57,11 @@ MYSQL* Con::GetCon()
     return m_con;
 }
 
+size_t Con::GetVersion()
+{
+    return m_version;
+}
+
 DBCon::DBCon(std::unique_ptr<Con>& con, std::weak_ptr<DB>& db)
     : m_con(std::move(con))
     , m_db(db)
@@ -132,8 +137,21 @@ std::unique_ptr<DBCon> DB::GetConnection()
     m_con_list.pop_back();
     return con;
 }
+
+void DB::CheckConnection()
+{
+    Lock lock(m_mut);
+    for (auto& con : m_con_list)
+    {
+        con->IsHealthy();
+    }
+}
+
 void DB::ReleaseConnection(std::unique_ptr<Con>& con)
 {
     Lock lock(m_mut);
-    m_con_list.emplace_back(std::move(con));
+    if (m_version == con->GetVersion())
+    {
+        m_con_list.emplace_back(std::move(con));
+    }
 }
