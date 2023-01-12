@@ -106,7 +106,7 @@ DB::~DB() {}
 
 void DB::Connect(const std::string& host, const std::string& name, const std::string& passwd, const std::string& database, int32_t port)
 {
-    Lock lock(m_mut);
+    std::lock_guard<std::mutex> lock(m_mut);
     m_version++;
     for (int i = 0; i < m_max; i++)
     {
@@ -122,7 +122,7 @@ std::unique_ptr<DBCon> DB::GetConnection()
 {
     std::weak_ptr<DB> wptr = shared_from_this();
     {
-        Lock lock(m_mut);
+        std::lock_guard<std::mutex> lock(m_mut);
         if (!m_con_list.empty())
         {
             std::unique_ptr<DBCon> con(new DBCon(m_con_list.back(), wptr));
@@ -131,7 +131,7 @@ std::unique_ptr<DBCon> DB::GetConnection()
         }
     }
 
-    UniqueLock lock(m_mut);
+    std::unique_lock<std::mutex> lock(m_mut);
     m_cond.wait(lock, [&] { return !m_con_list.empty(); });
     std::unique_ptr<DBCon> con(new DBCon(m_con_list.back(), wptr));
     m_con_list.pop_back();
@@ -140,7 +140,7 @@ std::unique_ptr<DBCon> DB::GetConnection()
 
 void DB::CheckConnection()
 {
-    Lock lock(m_mut);
+    std::lock_guard<std::mutex> lock(m_mut);
     for (auto& con : m_con_list)
     {
         con->IsHealthy();
@@ -149,7 +149,7 @@ void DB::CheckConnection()
 
 void DB::ReleaseConnection(std::unique_ptr<Con>& con)
 {
-    Lock lock(m_mut);
+    std::lock_guard<std::mutex> lock(m_mut);
     if (m_version == con->GetVersion())
     {
         m_con_list.emplace_back(std::move(con));

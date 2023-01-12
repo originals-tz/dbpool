@@ -56,8 +56,6 @@ private:
 class DB : public std::enable_shared_from_this<DB>
 {
     friend class DBCon;
-    using Lock = std::lock_guard<std::mutex>;
-    using UniqueLock = std::unique_lock<std::mutex>;
 
 public:
     static std::shared_ptr<DB> MakeDB(size_t max = 1);
