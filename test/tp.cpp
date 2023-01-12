@@ -1,13 +1,6 @@
 #include <unistd.h>
-#include "db.h"
 #include "thread_pool.h"
-void TestRAII()
-{
-    auto db = DB::MakeDB();
-    db->Connect("0.0.0.0", "root", "123456", "cdc", 3306);
-    auto con = db->GetConnection();
-    auto row = con->Query("select * from test");
-}
+#include <iostream>
 
 void TestExit()
 {
