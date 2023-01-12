@@ -61,13 +61,9 @@ class DB : public std::enable_shared_from_this<DB>
 
 public:
     static std::shared_ptr<DB> MakeDB(size_t max = 1);
-
     ~DB();
-
     void Connect(const std::string& host, const std::string& name, const std::string& passwd, const std::string& database, int32_t port);
-
     std::unique_ptr<DBCon> GetConnection();
-
     void CheckConnection();
 
 private:
